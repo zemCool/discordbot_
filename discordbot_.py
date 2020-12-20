@@ -87,9 +87,6 @@ async def join(ctx):
 async def _8ball(ctx, *, question):
     await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
 
-
-client.run('token')
-
 # Messages clearer
 
 @client.command()
@@ -141,3 +138,6 @@ async def unban(ctx, *, member):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send('Invalid command used.')
+
+
+client.run('token')
