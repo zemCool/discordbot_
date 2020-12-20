@@ -89,3 +89,55 @@ async def _8ball(ctx, *, question):
 
 
 client.run('token')
+
+# Messages clearer
+
+@client.command()
+@commands.has_permissions(manage_messages=True)
+async def clear(ctx, amount: int):
+    await ctx.channel.purge(limit=amount + 1)
+
+
+# An error with clearer
+@clear.error
+async def clear_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send('Please specify an amount of messages to delete.')
+
+
+# Kick
+@client.command()
+@commands.has_permissions(administrator=True)
+async def kick(ctx, member: discord.Member, *, reason=None):
+    await ctx.channel.purge(limit=1)
+    await member.kick(reason=reason)
+    await ctx.send(f"Kicked {member}")
+
+
+# Ban
+@client.command()
+@commands.has_permissions(administrator=True)
+async def ban(ctx, member: discord.Member, *, reason=None):
+    await ctx.channel.purge(limit=1)
+    await member.ban(reason=reason)
+    await ctx.send(f'{member.mention} is banned.')
+
+
+# Unban
+@client.command()
+@commands.has_permissions(administrator=True)
+async def unban(ctx, *, member):
+    await ctx.channel.purge(limit=1)
+    banned_users = await ctx.guild.bans()
+    for ban_entry in banned_users:
+        user = ban_entry.user
+        await ctx.guild.unban(user)
+        await ctx.send(f'{user.mention} is unbanned.')
+        return
+
+
+# Unknown command
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send('Invalid command used.')
